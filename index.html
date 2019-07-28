@@ -2,32 +2,77 @@
 <html lang="en-us">
 
 <head>
-  <meta charset="UTF-8">
-  <title>Rock Paper Scissors Part 7</title>
+    <meta charset="UTF-8">
+    <title>Rock Paper Scissor</title>
+    <!--Linking Bootstrap-->
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.3/examples/sticky-footer-navbar/">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+
+    <!-- Linking CSS -->
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+
 </head>
 
 <body>
+    <!--Title-->
+    <header>
+        <h1>Rock Paper Sicssors</h1>
+    </header>
+    <!--Score Board-->
+    <div id="score-board">
+        <div id="player-1" class="badge">Player 1</div>
+        <div id="player-2" class="badge">Player 2</div>
+        <span id="player-1-score">0</span> : <span id="player-2-score">0</span>
+    </div>
+    <!--Score Results-->
+    <div id="results">
+        <p>Paper covers rock. You win!</p>
+    </div>
+    <!--Choices-->
+    <div class="choices">
+        <div class="choice" id="rock">
+            <img src="assets/images/rock.png" alt="Rock">
+        </div>
+        <div class="choice" id="paper">
+            <img src="assets/images/paper.png" alt="Paper">
+        </div>
+        <div class="choice" id="sicssors">
+            <img src="assets/images/sicssors.png" alt="Sicssors">
+        </div>
+    </div>
+    <p id="action-message">Make your move</p>
+    <!--Original game board to be deleted-->
+    <div>
+        <p id="directions-text">Press r, p or s to start playing!</p>
+        <p id="userchoice-text"></p>
+        <p id="computerchoice-text"></p>
+        <p id="wins-text"></p>
+        <p id="losses-text"></p>
+        <p id="ties-text"></p>
+    </div>
+    <!--Chat board-->
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Send a message to the other player"
+            aria-label="Send a message to the other player" aria-describedby="basic-addon2">
+        <div class="input-group-append">
+            <button id="send-button" class="btn btn-default" type="button">
+                <i class="glyphicon glyphicon-send" style="background-color: azure"></i>
+            </button>
+        </div>
+    </div>
+    <!-- -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-  <div>
-    <p id="directions-text">Press r, p or s to start playing!</p>
-    <p id="userchoice-text"></p>
-    <p id="computerchoice-text"></p>
-    <p id="wins-text"></p>
-    <p id="losses-text"></p>
-    <p id="ties-text"></p>
-  </div>
-  
-  <!-- -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!--  -->
+    <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
 
-  <!--  -->
-  <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
+    <!-- -->
+    <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-database.js"></script>
 
-  <!-- -->
-  <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-database.js"></script>
-
-  <!-- -->
-  <script src="assets/javascript/app.js" type="text/javascript"></script>
+    <!-- -->
+    <script src="assets/javascript/app.js" type="text/javascript"></script>
 
 </body>
 
