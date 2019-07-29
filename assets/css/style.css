@@ -42,8 +42,6 @@ header > h1{
 #results{
     font-size: 40px;
     text-align: center;
-}
-#results > p{
     color: white;
 }
 .choices{

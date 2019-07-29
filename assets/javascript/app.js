@@ -1,51 +1,133 @@
-   // Creates an array that lists out all of the options (Rock, Paper, or Scissors).
-   var computerChoices = ["r", "p", "s"];
+/* global firebase */
 
-   // Creating variables to hold the number of wins, losses, and ties. They start at 0.
-   var wins = 0;
-   var losses = 0;
-   var ties = 0;
+// Initialize Firebase
+// Make sure that your configuration matches your firebase script version
+// (Ex. 3.0 != 3.7.1)
+var config = {
+    apiKey: "AIzaSyCaOBaSpw5qu5LhHCoJ7sO8Gqxbbxhv1Dc",
+    authDomain: "rock-paper-scissors-263e1.firebaseapp.com",
+    databaseURL: "https://rock-paper-scissors-263e1.firebaseio.com",
+    projectId: "rock-paper-scissors-263e1",
+    storageBucket: "",
+    messagingSenderId: "297603065655",
+    appId: "1:297603065655:web:8d30c9a582b377fe"
+};
 
-   // Create variables that hold references to the places in the HTML where we want to display things.
-   var directionsText = document.getElementById("directions-text");
-   var userChoiceText = document.getElementById("userchoice-text");
-   var computerChoiceText = document.getElementById("computerchoice-text");
-   var winsText = document.getElementById("wins-text");
-   var lossesText = document.getElementById("losses-text");
-   var tiesText = document.getElementById("ties-text");
+firebase.initializeApp(config);
+// -----------------------------
+// Create a variable to reference the database.
+var database = firebase.database();
 
-   // This function is run whenever the user presses a key.
-   document.onkeyup = function(event) {
+// connectionsRef references a specific location in our database.
+// All of our connections will be stored in this directory.
+var connectionsRef = database.ref("/connections");
+console.log(connectionsRef);
+// '.info/connected' is a special location provided by Firebase that is updated
+// every time the client's connection state changes.
+// '.info/connected' is a boolean value, true if the client is connected and false if they are not.
+var connectedRef = database.ref(".info/connected");
+console.log(connectedRef);
+// When the client's connection state changes...
 
-     // Determines which key was pressed.
-     var userGuess = event.key;
+connectedRef.on("value", function (snap) {
+    console.log(snap.val())
+    // If they are connected..
+    if (snap.val()) {
+        // Add user to the connections list.
+        console.log(connectionsRef);
+        var con = connectionsRef.push(true);
+        // Remove user from the connection list when they disconnect.
+        con.onDisconnect().remove();
+    }
+});
 
-     // Randomly chooses a choice from the options array. This is the Computer's guess.
-     var computerGuess = computerChoices[Math.floor(Math.random() * computerChoices.length)];
 
-     // Reworked our code from last step to use "else if" instead of lots of if statements.
+// When first loaded or when the connections list changes...
+connectionsRef.on("value", function (snap) {
+    //console.log(snap.numChildren);
+    if (snap.numChildren() > 2) {
+        console(connectionsRef.key);
+        alert("alert");
+    }
+  
+    console.log(snap.numChildren());
+});
 
-     // This logic determines the outcome of the game (win/loss/tie), and increments the appropriate number
-     if ((userGuess === "r") || (userGuess === "p") || (userGuess === "s")) {
 
-       if ((userGuess === "r" && computerGuess === "s") ||
-         (userGuess === "s" && computerGuess === "p") || 
-         (userGuess === "p" && computerGuess === "r")) {
-         wins++;
-       } else if (userGuess === computerGuess) {
-         ties++;
-       } else {
-         losses++;
-       }
+// Creates an array that lists out all of the options (Rock, Paper, or Scissors).
+var computerChoices = ["r", "p", "s"];
 
-       // Hide the directions
-       directionsText.textContent = "";
+// Creating variables to hold the number of wins, losses, and ties. They start at 0.
+var wins = 0;
+var losses = 0;
+var ties = 0;
 
-       // Display the user and computer guesses, and wins/losses/ties.
-       userChoiceText.textContent = "You chose: " + userGuess;
-       computerChoiceText.textContent = "The computer chose: " + computerGuess;
-       winsText.textContent = "wins: " + wins;
-       lossesText.textContent = "losses: " + losses;
-       tiesText.textContent = "ties: " + ties;
-     }
-   };
+// Create variables that hold references to the places in the HTML where we want to display things.
+var directionsText = document.getElementById("directions-text");
+var userChoiceText = document.getElementById("userchoice-text");
+var computerChoiceText = document.getElementById("computerchoice-text");
+var winsText = document.getElementById("wins-text");
+var lossesText = document.getElementById("losses-text");
+var tiesText = document.getElementById("ties-text");
+
+
+
+// This logic determines the outcome of the game (win/loss/tie), and increments the appropriate number
+function game(player1) {
+    var computerGuess = computerChoices[Math.floor(Math.random() * computerChoices.length)];
+    $("#results").empty();
+    if (player1 === "r" && computerGuess === "s") {
+        wins++;
+        $("#results").text("Rock destroys sicssors. You win");
+        $("#player-1-score").text(wins);
+    }
+    else if (player1 === "s" && computerGuess === "p") {
+        wins++;
+        $("#results").text("Sicssors cut paper. You win");
+        $("#player-1-score").text(wins);
+    }
+    else if (player1 === "p" && computerGuess === "r") {
+        wins++;
+        $("#results").text("Paper covers rock. You win");
+        $("#player-1-score").text(wins);
+
+    }
+    else if (player1 === computerGuess) {
+        ties++;
+        $("#results").text("It is a draw");
+    }
+    else if (player1 === "s" && computerGuess === "r") {
+        losses++;
+        $("#results").text("Rock destroys sicssors. You lost");
+        $("#player-2-score").text(losses);
+    }
+    else if (player1 === "p" && computerGuess === "s") {
+        losses++;
+        $("#results").text("Sicssors cut paper. You lost");
+        $("#player-2-score").text(losses);
+    }
+    else if (player1 === "r" && computerGuess === "p") {
+        losses++;
+        $("#results").text("Paper covers rock. You lost");
+        $("#player-2-score").text(losses);
+
+    }
+return false;
+}
+
+
+
+function choices() {
+    event.preventDefault();
+    var playerChoice = $(this);
+    if (playerChoice.attr("data-choice") === "rock") {
+        game("r");
+    } else if (playerChoice.attr("data-choice") === "paper") {
+        game("p");
+    } else if (playerChoice.attr("data-choice") === "sicssors") {
+        game("s");
+    }
+
+}
+$(document).on("click", ".choice", choices);
+

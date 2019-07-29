@@ -32,34 +32,29 @@
     </div>
     <!--Choices-->
     <div class="choices">
-        <div class="choice" id="rock">
+        <div class="choice" data-choice="rock">
             <img src="assets/images/rock.png" alt="Rock">
         </div>
-        <div class="choice" id="paper">
+        <div class="choice" data-choice="paper">
             <img src="assets/images/paper.png" alt="Paper">
         </div>
-        <div class="choice" id="sicssors">
+        <div class="choice" data-choice="sicssors">
             <img src="assets/images/sicssors.png" alt="Sicssors">
         </div>
     </div>
     <p id="action-message">Make your move</p>
     <!--Original game board to be deleted-->
-    <div>
-        <p id="directions-text">Press r, p or s to start playing!</p>
-        <p id="userchoice-text"></p>
-        <p id="computerchoice-text"></p>
-        <p id="wins-text"></p>
-        <p id="losses-text"></p>
-        <p id="ties-text"></p>
-    </div>
+    
     <!--Chat board-->
-    <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="Send a message to the other player"
-            aria-label="Send a message to the other player" aria-describedby="basic-addon2">
-        <div class="input-group-append">
-            <button id="send-button" class="btn btn-default" type="button">
-                <i class="glyphicon glyphicon-send" style="background-color: azure"></i>
-            </button>
+    <div id=chat-messages>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" id="chat-message" placeholder="Send a message to the other player"
+                aria-label="Send a message to the other player" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button id="send-button" class="btn btn-default" type="button">
+                    <i class="glyphicon glyphicon-send" style="background-color: azure"></i>
+                </button>
+            </div>
         </div>
     </div>
     <!-- -->
