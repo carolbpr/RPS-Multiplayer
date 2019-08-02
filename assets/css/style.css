@@ -73,3 +73,27 @@ img{
     bottom: 0;
     width: 50%;
 }
+.modal {
+    display: none; /* Hidden by default */
+     /* Stay in place */
+    z-index: 1; /* Sit on top */
+    width: auto; 
+    height:30px; 
+    background-color: rgba(0, 0, 0, 0); /* Black w/ opacity */
+    top : 74px;
+    }
+/* Modal Content (image) */
+
+  #InfoCaption {
+    width: 100%;
+    text-align: center;
+    color: black;
+    font-size: 15px;
+    text-emphasis: wrap;
+    font-family: 'Georgia', 'Times', 'Times New Roman', 'serif';
+    text-shadow: 2px 2px 5px grey;
+    background-image: linear-gradient(red,teal);
+    border: 1px solid rgba(0,0,0,.9);
+    
+    display: block;
+  }
