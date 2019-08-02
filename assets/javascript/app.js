@@ -15,16 +15,14 @@ firebase.initializeApp(config);
 // -----------------------------
 // Create a variable to reference the database.
 var database = firebase.database();
-
 // connectionsRef references a specific location in our database.
-// All of our connections will be stored in this directory.
+// All of our connections will be stored in this directory. This refers to the players.
+//Each connection is a player
 var connectionsRef = database.ref("/connections");
 var resultsRef = database.ref("/results");
 var gameRef = database.ref("/game");
-// '.info/connected' is a special location provided by Firebase that is updated
-// every time the client's connection state changes.
-// '.info/connected' is a boolean value, true if the client is connected and false if they are not.
 var connectedRef = database.ref(".info/connected");
+//variables and counters
 var player1 = "";
 var player2 = "";
 var connection = "";
@@ -34,6 +32,7 @@ var player1wins = 0;
 var player2wins = 0;
 var ties = 0;
 var player = 0;
+//more database directories
 database.ref("/results").set({
     message: "Make your selection to start playing",
     player1wins: 0,
@@ -44,6 +43,9 @@ database.ref("/game").set({
 });
 var chatRef = database.ref("/chat");
 console.log()
+// '.info/connected' is a special location provided by Firebase that is updated
+// every time the client's connection state changes.
+// '.info/connected' is a boolean value, true if the client is connected and false if they are not.
 // When the client's connection state changes...
 connectedRef.on("value", function (snap) {
     console.log(snap);
@@ -76,6 +78,7 @@ connectionsRef.on("value", function (snap) {
     var keys = Object.keys(val);
     var last = keys[keys.length - 1];
     console.log(playerNumber);
+    //This set the player 1
     if (playerNumber === 1) {
         clearInterval(time);
         $("#player-1").css("border", "8px solid");
@@ -92,6 +95,7 @@ connectionsRef.on("value", function (snap) {
             player = 1;
         }
     }
+    //This set the player 2
     else if (playerNumber === 2) {
         clearInterval(time);
         $(".modal").css("display", "block");
@@ -112,6 +116,7 @@ connectionsRef.on("value", function (snap) {
         }, 5000);
         database.ref("/game/on/").set(true);
     }
+    //This disconnect if a third connection is intended
     else if (playerNumber > 2) {
         clearInterval(time);
         if (last === playerkey) {
@@ -124,11 +129,10 @@ connectionsRef.on("value", function (snap) {
             database.ref("/connections/" + playerkey).remove();
         }
     }
-
 }, function (errorObject) {
     console.log("The read failed: " + errorObject.code);
 });
-
+//Reset the player choice each time
 function resetSelection() {
     // event.preventDefault();
     ref = database.ref("/connections/");
@@ -141,6 +145,7 @@ function resetSelection() {
         database.ref("/results/player2/").set("");
     })
 }
+//Display the results each time and in case of a Winner also restart the game
 function displayResults() {
     resultsRef.on("value", function (snap) {
         if (snap.val().player1wins >= 5) {
@@ -266,6 +271,7 @@ function game() {
     }
     displayResults();
 }
+//This passed the choice of each player from the database
 function playerchoose() {
     ref = database.ref("/connections/");
     choose1 = ref.orderByChild("choice").limitToFirst(1).once("value", function (snapshot) {
@@ -290,12 +296,14 @@ function playerchoose() {
     });
     game();
 }
+//This record the choice in the database
 function playerChoicefunction(choice) {
     event.preventDefault();
     console.log(choice);
     database.ref("/connections/" + playerkey + "/").set(choice);
     playerchoose();
 };
+//This is the choice by the click
 function choices() {
     database.ref("/results/message").set("");
     database.ref("/results/actionMessage").set("Game On");
@@ -312,6 +320,7 @@ function choices() {
     }
 }
 $(document).on("click", ".choice", choices);
+//This operate the chat
 function sendMessage() {
     var gifInput = $("#chat-message").val().trim();
     if (gifInput !== "" && player == 1) {
