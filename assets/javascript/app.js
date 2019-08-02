@@ -11,7 +11,6 @@ var config = {
     messagingSenderId: "297603065655",
     appId: "1:297603065655:web:8d30c9a582b377fe"
 };
-
 firebase.initializeApp(config);
 // -----------------------------
 // Create a variable to reference the database.
@@ -34,6 +33,7 @@ var time;
 var player1wins = 0;
 var player2wins = 0;
 var ties = 0;
+var player = 0;
 database.ref("/results").set({
     message: "Make your selection to start playing",
     player1wins: 0,
@@ -42,9 +42,8 @@ database.ref("/results").set({
 database.ref("/game").set({
     on: false
 });
-
+var chatRef = database.ref("/chat");
 console.log()
-
 // When the client's connection state changes...
 connectedRef.on("value", function (snap) {
     console.log(snap);
@@ -52,21 +51,24 @@ connectedRef.on("value", function (snap) {
     console.log(playerNumber);
     // If they are connected..
     if (snap.val()) {
-
         // Add user to the connections list.
         var con = connectionsRef.push(true);
         playerkey = con.key
         console.log("your key is :" + playerkey) //this key can be used to find the player later
         // Remove user from the connection list when they disconnect.
         con.onDisconnect().remove();
+        chatRef.on("value", function (snap) {
+            console.log(snap.val());
+            var chat = $("<html><h6>");
+            chat.html(snap.val());
+            chat.prependTo($("#chat-box"));
 
+        })
     }
 });
 
-
 // When first loaded or when the connections list changes...
 connectionsRef.on("value", function (snap) {
-
     // Display the viewer count in the html.
     // The number of online users is the number of children in the connections list.
     playerNumber = snap.numChildren();
@@ -87,6 +89,7 @@ connectionsRef.on("value", function (snap) {
         if (last === playerkey) {
             player1 = playerkey;
             console.log(player1);
+            player = 1;
         }
     }
     else if (playerNumber === 2) {
@@ -99,6 +102,7 @@ connectionsRef.on("value", function (snap) {
             $("#InfoCaption").html("You are Player 2");
             $("#player-1").css("border", "3px solid");
             $("#player-2").css("border", "8px solid");
+            player = 2;
         }
         player2 = playerkey;
         console.log(player2);
@@ -137,7 +141,6 @@ function resetSelection() {
         database.ref("/results/player2/").set("");
     })
 }
-
 function displayResults() {
     resultsRef.on("value", function (snap) {
         if (snap.val().player1wins >= 5) {
@@ -147,15 +150,15 @@ function displayResults() {
             database.ref("/results/actionMessage").set(actionMessage);
             database.ref("/results/player1wins/").set("0");
             database.ref("/results/player2wins/").set("0");
+            database.ref("/chat").set("");
             database.ref("/game/on/").set(false);
-            $("#results").html("<p>"+ snap.val().message +"</p>");
+            $("#results").html("<p>" + snap.val().message + "</p>");
             $("#player-1-score").html("<span>0</span>");
             $("#player-2-score").html("<span>0</span>");
-            $("#action-message").html("<p>"+snap.val().actionMessage+"</p>")
+            $("#action-message").html("<p>" + snap.val().actionMessage + "</p>")
             player1wins = 0;
             player2wins = 0;
             ties = 0;
-            
         }
         else if (snap.val().player2wins >= 5) {
             message = "Player 2 is the winner!!!";
@@ -164,21 +167,23 @@ function displayResults() {
             database.ref("/results/actionMessage").set(actionMessage);
             database.ref("/results/player1wins/").set("0");
             database.ref("/results/player2wins/").set("0");
+            database.ref("/chat").set("");
             database.ref("/game/on/").set(false);
-            $("#results").html("<p>"+snap.val().message+"</p>");
+            $("#results").html("<p>" + snap.val().message + "</p>");
             $("#player-1-score").html("<span>0</span>");
             $("#player-2-score").html("<span>0</span>");
-            $("#action-message").html("<p>"+snap.val().actionMessage+"</p>");
+            $("#action-message").html("<p>" + snap.val().actionMessage + "</p>");
             player1wins = 0;
             player2wins = 0;
             ties = 0;
-            
+
         }
-        else{
+        else {
             $("#results").html("<p>" + snap.val().message + "</p>");
             $("#action-message").html("<p>" + snap.val().actionMessage + "</p>");
             $("#player-1-score").html("<span>" + snap.val().player1wins + "</span>");
             $("#player-2-score").html("<span>" + snap.val().player2wins + "</span>");
+
         }
 
     })
@@ -247,8 +252,6 @@ function game() {
             database.ref("/results/player2wins").set(player2wins);
             database.ref("/results/message").set(message);
             database.ref("/results/actionMessage").set(actionMessage);
-           
-            
             resetSelection();
         }
         else if (player1 === "r" && player2 === "p") {
@@ -262,7 +265,6 @@ function game() {
         }
     }
     displayResults();
-
 }
 function playerchoose() {
     ref = database.ref("/connections/");
@@ -288,40 +290,41 @@ function playerchoose() {
     });
     game();
 }
-
-
 function playerChoicefunction(choice) {
     event.preventDefault();
     console.log(choice);
     database.ref("/connections/" + playerkey + "/").set(choice);
     playerchoose();
-
 };
-
-
-
 function choices() {
-
     database.ref("/results/message").set("");
     database.ref("/results/actionMessage").set("Game On");
     var playerChoice = $(this);
-
     if (playerChoice.attr("data-choice") === "rock") {
         $("#action-message").html("<p>You selected Rock</p>");
         playerChoicefunction("r");
-
-
     } else if (playerChoice.attr("data-choice") === "paper") {
         $("#action-message").html("<p>You selected Paper</p>");
         playerChoicefunction("p");
-
     } else if (playerChoice.attr("data-choice") === "scissors") {
         $("#action-message").html("<p>You selected Scissors</p>");
         playerChoicefunction("s");
-
-
     }
-
 }
 $(document).on("click", ".choice", choices);
-
+function sendMessage() {
+    var gifInput = $("#chat-message").val().trim();
+    if (gifInput !== "" && player == 1) {
+        chat = chatRef.set("Player 1 says: " + gifInput);
+        $("#chat-message").val("");
+    }
+    else if (gifInput !== "" && player == 2) {
+        chat = chatRef.set("Player 2 says: " + gifInput);
+        $("#chat-message").val("");
+    }
+    connectionsRef.on("value", function (snap) {
+        
+    });
+    return false;
+}
+$(document).on("click", "button", sendMessage);
