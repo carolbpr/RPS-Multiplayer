@@ -89,8 +89,8 @@ img{
   #InfoCaption {
     width: 100%;
     text-align: center;
-    color: black;
-    font-size: 15px;
+    color: white;
+    font-size: 20px;
     text-emphasis: wrap;
     font-family: 'Georgia', 'Times', 'Times New Roman', 'serif';
     text-shadow: 2px 2px 5px grey;
