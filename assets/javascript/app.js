@@ -30,7 +30,6 @@ var playerkey = "not_connected";
 var time;
 var player1wins = 0;
 var player2wins = 0;
-var ties = 0;
 var player = 0;
 //more database directories
 database.ref("/results").set({
@@ -42,15 +41,12 @@ database.ref("/game").set({
     on: false
 });
 var chatRef = database.ref("/chat");
-console.log()
 // '.info/connected' is a special location provided by Firebase that is updated
 // every time the client's connection state changes.
 // '.info/connected' is a boolean value, true if the client is connected and false if they are not.
 // When the client's connection state changes...
 connectedRef.on("value", function (snap) {
-    console.log(snap);
     playerNumber = snap.numChildren();
-    console.log(playerNumber);
     // If they are connected..
     if (snap.val()) {
         // Add user to the connections list.
@@ -60,7 +56,6 @@ connectedRef.on("value", function (snap) {
         // Remove user from the connection list when they disconnect.
         con.onDisconnect().remove();
         chatRef.on("value", function (snap) {
-            console.log(snap.val());
             var chat = $("<html><h6>");
             chat.html(snap.val());
             chat.prependTo($("#chat-box"));
@@ -77,7 +72,6 @@ connectionsRef.on("value", function (snap) {
     val = snap.val()
     var keys = Object.keys(val);
     var last = keys[keys.length - 1];
-    console.log(playerNumber);
     //This set the player 1
     if (playerNumber === 1) {
         clearInterval(time);
@@ -91,7 +85,6 @@ connectionsRef.on("value", function (snap) {
         }, 5000);
         if (last === playerkey) {
             player1 = playerkey;
-            console.log(player1);
             player = 1;
         }
     }
@@ -109,7 +102,6 @@ connectionsRef.on("value", function (snap) {
             player = 2;
         }
         player2 = playerkey;
-        console.log(player2);
         time = setInterval(function () {
             $("#InfoCaption").empty(),
                 $("#popupInfo").css("display", "none")
@@ -138,7 +130,6 @@ function resetSelection() {
     ref = database.ref("/connections/");
     ref.orderByChild("choice").limitToFirst(2).once("value", function (snapshot) {
         snapshot.forEach(function (child) {
-            console.log(child);
             database.ref("/connections/" + child.key + "/").set(true);
         })
         database.ref("/results/player1/").set("");
@@ -201,8 +192,8 @@ function game() {
     resultsRef.on("value", function (snap) {
         player1 = snap.val().player1;
         player2 = snap.val().player2;
-        console.log(player1);
-        console.log(player2);
+        player1wins =snap.val().player1wins;
+        player2wins = snap.val().player2wins;
     })
     if ((player1 == "r" || player1 == "p" || player1 == "s") && (player2 == "r" || player2 == "p" || player2 == "s")) {
 
@@ -217,7 +208,7 @@ function game() {
 
         }
         else if (player1 === "s" && player2 === "p") {
-            player1wins++;
+            player1wins++
             message = "Scissors cut paper. Player 1 win";
             actionMessage = "Make your move";
             database.ref("/results/player1wins").set(player1wins);
@@ -229,16 +220,18 @@ function game() {
             player1wins++;
             message = "Paper covers rock. Player 1 win";
             actionMessage = "Make your move";
-            database.ref("/results/player1wins").set(player1wins);
+            database.ref("/results/player1wins").set(player1wins++);
             database.ref("/results/message").set(message);
             database.ref("/results/actionMessage").set(actionMessage);
             resetSelection();
 
         }
         else if (player1 === player2) {
-            ties++;
+            
             message = "It is a draw";
             actionMessage = "Make your move";
+            database.ref("/results/player1wins").set(player1wins);
+            database.ref("/results/player2wins").set(player2wins);
             database.ref("/results/message").set(message);
             database.ref("/results/actionMessage").set(actionMessage);
             resetSelection();
@@ -278,20 +271,16 @@ function playerchoose() {
     ref = database.ref("/connections/");
     choose1 = ref.orderByChild("choice").limitToFirst(1).once("value", function (snapshot) {
         snapshot.forEach(function (child) {
-            console.log(child.val());
             if (child.val() == "r" || child.val() == "p" || child.val() == "s") {
                 player1 = child.val();
-                console.log(player1);
                 database.ref("/results/player1/").set(player1);
             }
         });
     });
     choose2 = ref.orderByChild("choice").limitToLast(1).once("value", function (snapshot) {
         snapshot.forEach(function (child) {
-            console.log(child.val());
             if (child.val() == "r" || child.val() == "p" || child.val() == "s") {
                 player2 = child.val();
-                console.log(player2);
                 database.ref("/results/player2").set(player2);
             }
         });
@@ -301,7 +290,6 @@ function playerchoose() {
 //This record the choice in the database
 function playerChoicefunction(choice) {
     event.preventDefault();
-    console.log(choice);
     database.ref("/connections/" + playerkey + "/").set(choice);
     playerchoose();
 };
@@ -311,13 +299,10 @@ function choices() {
     database.ref("/results/actionMessage").set("Game On");
     var playerChoice = $(this);
     if (playerChoice.attr("data-choice") === "rock") {
-        $("#action-message").html("<p>You selected Rock</p>");
         playerChoicefunction("r");
     } else if (playerChoice.attr("data-choice") === "paper") {
-        $("#action-message").html("<p>You selected Paper</p>");
         playerChoicefunction("p");
     } else if (playerChoice.attr("data-choice") === "scissors") {
-        $("#action-message").html("<p>You selected Scissors</p>");
         playerChoicefunction("s");
     }
 }
