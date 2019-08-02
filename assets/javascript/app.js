@@ -161,6 +161,7 @@ function displayResults() {
             $("#player-1-score").html("<span>0</span>");
             $("#player-2-score").html("<span>0</span>");
             $("#action-message").html("<p>" + snap.val().actionMessage + "</p>")
+            $("#chat-box").empty();
             player1wins = 0;
             player2wins = 0;
             ties = 0;
@@ -178,6 +179,7 @@ function displayResults() {
             $("#player-1-score").html("<span>0</span>");
             $("#player-2-score").html("<span>0</span>");
             $("#action-message").html("<p>" + snap.val().actionMessage + "</p>");
+            $("#chat-box").empty();
             player1wins = 0;
             player2wins = 0;
             ties = 0;
