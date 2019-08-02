@@ -43,6 +43,7 @@ header > h1{
     font-size: 40px;
     text-align: center;
     color: white;
+    height: 60px;
 }
 .choices{
     text-align: center;
@@ -66,6 +67,7 @@ img{
     color:white;
     text-align: center;
     font-size: 20px;
+    height: 30px;
 }
 .input-group{
     margin-left:30px;
